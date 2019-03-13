@@ -1,0 +1,3 @@
+[submodule "ScalewayWebsite"]
+	path = ScalewayWebsite
+	url = git@github.com:jayceelock/ScalewayWebsite.git
