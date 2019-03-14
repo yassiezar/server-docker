@@ -9,19 +9,18 @@ services:
       - POSTGRES_USER=jaycee
       - POSTGRES_PASSWORD=jaycee
     volumes:
-      - .create-multiple-databases.sh:/docker-entrypoint-initdb.d
       - ./postgres_data:/var/lib/postgresql/data/
     expose:
       - 5432
   web:
-    build: ./ScalewayWebsite
+    build: ./web
     image: scalewaywebsite
     restart: unless-stopped
     expose:
       - 8080
     depends_on:
       - db
-    command: /usr/local/bin/uwsgi --ini uwsgi_conf.ini --uid www-data --gid www-data
+    command: /usr/local/bin/uwsgi --ini /jclock/web/uwsgi_conf.ini --uid www-data --gid www-data
     links:
       - db
     volumes:
@@ -50,10 +49,10 @@ services:
       - parse
       - web
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - ./uwsgi_params:/etc/nginx/uwsgi_params
-      - ./key.pem:/etc/nginx/conf.d/key.pem
-      - ./cert.pem:/etc/nginx/conf.d/cert.pem
+      - ./proxy/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./proxy/uwsgi_params:/etc/nginx/uwsgi_params
+      - ./proxy/key.pem:/etc/nginx/conf.d/key.pem
+      - ./proxy/cert.pem:/etc/nginx/conf.d/cert.pem
       - ./:/jclock
     command: "bash -c '/usr/sbin/nginx -g \"daemon off;\"'"
 
