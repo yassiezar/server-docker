@@ -1,0 +1,5 @@
+{
+	"appId": "parse",
+	"masterKey": "parse",
+	"databaseURI": "postgres://jaycee:jaycee@db:5432/scalewaywebsite"
+}

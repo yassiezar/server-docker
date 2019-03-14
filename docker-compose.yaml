@@ -6,9 +6,11 @@ services:
     restart: unless-stopped
     environment:
       - POSTGRES_DB=scalewaywebsite
+      #- POSTGRES_MULTIPLE_DATABASES=scalewaywebsite,parsedb
       - POSTGRES_USER=jaycee
       - POSTGRES_PASSWORD=jaycee
     volumes:
+      - .create-multiple-databases.sh:/docker-entrypoint-initdb.d
       - ./postgres_data:/var/lib/postgresql/data/
     expose:
       - 5432
@@ -20,21 +22,33 @@ services:
       - 8080
     depends_on:
       - db
-    #command: ["bash", "/jclock/wait-for-it.sh", "db:5432", "--", "python", "ScalewayWebsite/manage.py", "runserver", "0.0.0.0:8000"] #python ScalewayWebsite/manage.py runserver 0.0.0.0:8000
     command: /usr/local/bin/uwsgi --ini uwsgi_conf.ini --uid www-data --gid www-data
     links:
       - db
     volumes:
       - .:/jclock
-
+  parse:
+    image: parse-server
+    build: ./parse
+    restart: unless-stopped
+    expose:
+      - 1337
+    links:
+      - db
+    depends_on: 
+      - db
+    volumes:
+      - ./parse/config.json:/parse-server/config.json
+    command: /usr/local/bin/parse-server /parse-server/config.json
   proxy:
     image: nginx
     restart: unless-stopped
     ports:
-      #- "8081:80"
       - "80:80"
       - "443:443"
+      - "1337:1337"
     links:
+      - parse
       - web
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
