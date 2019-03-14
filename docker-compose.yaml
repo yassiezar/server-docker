@@ -20,11 +20,12 @@ services:
       - 8080
     depends_on:
       - db
-    command: /usr/local/bin/uwsgi --ini /jclock/web/uwsgi_conf.ini --uid www-data --gid www-data
+    command: /usr/local/bin/uwsgi --ini /jclock.co.uk/uwsgi_conf.ini --uid www-data --gid www-data
     links:
       - db
     volumes:
-      - .:/jclock
+      - ./web/uwsgi_conf.ini:/jclock.co.uk/uwsgi_conf.ini
+      - /var/www-data/ScalewayWebsite/:/var/www-data/ScalewayWebsite/
   parse:
     image: parse-server
     build: ./parse
@@ -53,7 +54,8 @@ services:
       - ./proxy/uwsgi_params:/etc/nginx/uwsgi_params
       - ./proxy/key.pem:/etc/nginx/conf.d/key.pem
       - ./proxy/cert.pem:/etc/nginx/conf.d/cert.pem
-      - ./:/jclock
+      - /var/www-data/ScalewayWebsite/:/var/www-data/ScalewayWebsite/
+      #- ./:/jclock
     command: "bash -c '/usr/sbin/nginx -g \"daemon off;\"'"
 
 volumes:

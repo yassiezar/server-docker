@@ -2,21 +2,19 @@
 FROM python:3.7-slim
 
 # Set work directory
-RUN mkdir /jclock
-WORKDIR /jclock
+RUN mkdir /jclock.co.uk
+WORKDIR /jclock.co.uk
 
 # Install build files
 RUN apt-get update && apt-get install -y build-essential git
 
 # Install dependencies
-RUN git clone ScalewayWebsite/Pipfile ScalewayWebsite/Pipfile.lock /jclock/ScalewayWebsite/
+RUN git clone https://github.com/jayceelock/ScalewayWebsite.git
 RUN pip install pipenv
-WORKDIR /jclock/ScalewayWebsite
+WORKDIR /jclock.co.uk/ScalewayWebsite
+RUN git checkout docker
+RUN git pull origin docker
 RUN pipenv install --system
-WORKDIR /jclock
-
-# Copy project
-COPY ./ScalewayWebsite/ /jclock/
 
 # Set environment varibles
 ENV PYTHONDONTWRITEBYTECODE 1
