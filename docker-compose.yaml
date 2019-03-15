@@ -1,4 +1,4 @@
-version: '3'
+version: '2'
 
 services:
   db:
@@ -43,8 +43,8 @@ services:
     image: nginx
     restart: unless-stopped
     ports:
-      - "80:80"
-      - "443:443"
+      - "8001:80"
+#      - "443:443"
       - "1337:1337"
     links:
       - parse
