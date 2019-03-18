@@ -26,6 +26,19 @@ services:
     volumes:
       - ./web/uwsgi_conf.ini:/jclock.co.uk/uwsgi_conf.ini
       - /var/www-data/ScalewayWebsite/:/var/www-data/ScalewayWebsite/
+  parse-dashboard:
+    image: parse-dashboard
+    build: ./parse-dashboard
+    restart: unless-stopped
+    expose:
+      - 4040
+    links: 
+      - parse
+    depends_on:
+      - parse
+    volumes:
+      - ./parse-dashboard/config.json:/parse-dashboard/config.json 
+    command: /usr/local/bin/parse-dashboard /parse-dashboard/config.json --allowInsecureHTTP=1
   parse:
     image: parse-server
     build: ./parse
@@ -40,12 +53,14 @@ services:
       - ./parse/config.json:/parse-server/config.json
     command: /usr/local/bin/parse-server /parse-server/config.json
   proxy:
-    image: nginx
+    image: proxy
+    build: ./proxy
     restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
       - "1337:1337"
+      - "4040:4040"
     links:
       - parse
       - web
@@ -55,6 +70,8 @@ services:
       - /etc/letsencrypt/live/jclock.co.uk/privkey.pem:/etc/nginx/conf.d/key.pem
       - /etc/letsencrypt/live/jclock.co.uk/fullchain.pem:/etc/nginx/conf.d/cert.pem
       - /var/www-data/ScalewayWebsite/:/var/www-data/ScalewayWebsite/
+        #      - ./logs/proxy/access.log:/var/log/nginx/access.log
+        #      - ./logs/proxy/error.log:/var/log/nginx/error.log
       #- ./:/jclock
     command: "bash -c '/usr/sbin/nginx -g \"daemon off;\"'"
 
