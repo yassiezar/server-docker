@@ -52,8 +52,8 @@ services:
     volumes:
       - ./proxy/nginx.conf:/etc/nginx/conf.d/default.conf
       - ./proxy/uwsgi_params:/etc/nginx/uwsgi_params
-      - ./proxy/key.pem:/etc/nginx/conf.d/key.pem
-      - ./proxy/cert.pem:/etc/nginx/conf.d/cert.pem
+      - /etc/letsencrypt/live/jclock.co.uk/privkey.pem:/etc/nginx/conf.d/key.pem
+      - /etc/letsencrypt/live/jclock.co.uk/fullchain.pem:/etc/nginx/conf.d/cert.pem
       - /var/www-data/ScalewayWebsite/:/var/www-data/ScalewayWebsite/
       #- ./:/jclock
     command: "bash -c '/usr/sbin/nginx -g \"daemon off;\"'"

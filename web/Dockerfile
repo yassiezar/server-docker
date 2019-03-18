@@ -10,10 +10,11 @@ RUN apt-get update && apt-get install -y build-essential git python-psycopg2 lib
 
 # Install dependencies
 RUN git clone https://github.com/jayceelock/ScalewayWebsite.git
-RUN pip install pipenv
 WORKDIR /jclock.co.uk/ScalewayWebsite
 RUN git checkout docker
 RUN git pull origin docker
+
+RUN pip install pipenv
 RUN pipenv install --system
 
 # Set environment varibles
