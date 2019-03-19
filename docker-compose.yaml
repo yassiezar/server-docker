@@ -38,7 +38,7 @@ services:
       - parse
     volumes:
       - ./parse-dashboard/config.json:/parse-dashboard/config.json 
-    command: /usr/local/bin/parse-dashboard /parse-dashboard/config.json --allowInsecureHTTP=1
+    command: /usr/local/bin/parse-dashboard /parse-dashboard/config.json --allowInsecureHTTP=1 --mountPath=/dashboard
   parse:
     image: parse-server
     build: ./parse
