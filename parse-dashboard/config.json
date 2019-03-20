@@ -3,8 +3,7 @@
 		{
 			"appName": "tagalong",
 			"appId": "tagalong",
-			"masterKey": "tagalong",
-			"serverURL": "https://jclock.co.uk/parse"
+			"masterKey": "tagalong"
 		}
 	],
 	"users": [

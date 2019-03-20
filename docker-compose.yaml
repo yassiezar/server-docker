@@ -17,8 +17,6 @@ services:
     build: ./web
     image: scalewaywebsite
     restart: unless-stopped
-    expose:
-      - 8080
     depends_on:
       - db
     command: /usr/local/bin/uwsgi --ini /jclock.co.uk/uwsgi_conf.ini --uid www-data --gid www-data
@@ -27,6 +25,8 @@ services:
     volumes:
       - ./web/uwsgi_conf.ini:/jclock.co.uk/uwsgi_conf.ini
       - /var/www-data/ScalewayWebsite/:/var/www-data/ScalewayWebsite/
+    expose:
+      - 8080
 
   parse-dashboard:
     image: parse-dashboard
@@ -35,18 +35,20 @@ services:
     expose:
       - 4040
     links: 
-      - parse
+      - parse-server
     depends_on:
-      - parse
+      - parse-server
     volumes:
       - ./parse-dashboard/config.json:/parse-dashboard/config.json 
-    command: /usr/local/bin/parse-dashboard --config /parse-dashboard/config.json --mountPath=/dashboard 
+    command: /usr/local/bin/parse-dashboard --mountPath=/dashboard --allowInsecureHTTP=1 --serverURL=http://${SERVER_URL}:1337/parse --appId=tagalong --masterKey=tagalong
     environment:
-      - PARSE_DASHBOARD_ALLOW_INSECURE_HTTP=1
+      - SERVER_URL=localhost
+      - PARSE_DASHBOARD_USER_PASSWORD=jaycee
+      - PARSE_DASHBOARD_USER_ID=jaycee
 
-  parse:
+  parse-server:
     image: parse-server
-    build: ./parse
+    build: ./parse-server
     restart: unless-stopped
     expose:
       - 1337
@@ -55,8 +57,9 @@ services:
     depends_on: 
       - db
     volumes:
-      - ./parse/config.json:/parse-server/config.json
+      - ./parse-server/config.json:/parse-server/config.json
     command: /usr/local/bin/parse-server /parse-server/config.json
+
   proxy:
     image: proxy
     build: ./proxy
@@ -67,7 +70,8 @@ services:
       - "1337:1337"
       - "4040:4040"
     links:
-      - parse
+      - parse-dashboard
+      - parse-server
       - web
     volumes:
       - ./proxy/nginx.conf:/etc/nginx/conf.d/default.conf
@@ -75,9 +79,6 @@ services:
       - /etc/letsencrypt/live/jclock.co.uk/privkey.pem:/etc/nginx/conf.d/key.pem
       - /etc/letsencrypt/live/jclock.co.uk/fullchain.pem:/etc/nginx/conf.d/cert.pem
       - /var/www-data/ScalewayWebsite/:/var/www-data/ScalewayWebsite/
-        #      - ./logs/proxy/access.log:/var/log/nginx/access.log
-        #      - ./logs/proxy/error.log:/var/log/nginx/error.log
-      #- ./:/jclock
     command: "bash -c '/usr/sbin/nginx -g \"daemon off;\"'"
 
 volumes:
