@@ -1,5 +1,17 @@
 {
-	"appId": "parse",
-	"masterKey": "parse",
-	"serverURL": "http://localhost:1337"
+	"apps": [
+		{
+			"appName": "tagalong",
+			"appId": "tagalong",
+			"masterKey": "tagalong",
+			"serverURL": "https://jclock.co.uk/parse"
+		}
+	],
+	"users": [
+		{
+			"user": "jaycee",
+			"pass": "jaycee"
+		}
+	],
+	"useEncryptedPasswords": false
 }

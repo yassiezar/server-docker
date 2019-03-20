@@ -12,6 +12,7 @@ services:
       - ./postgres_data:/var/lib/postgresql/data/
     expose:
       - 5432
+
   web:
     build: ./web
     image: scalewaywebsite
@@ -26,6 +27,7 @@ services:
     volumes:
       - ./web/uwsgi_conf.ini:/jclock.co.uk/uwsgi_conf.ini
       - /var/www-data/ScalewayWebsite/:/var/www-data/ScalewayWebsite/
+
   parse-dashboard:
     image: parse-dashboard
     build: ./parse-dashboard
@@ -38,7 +40,10 @@ services:
       - parse
     volumes:
       - ./parse-dashboard/config.json:/parse-dashboard/config.json 
-    command: /usr/local/bin/parse-dashboard /parse-dashboard/config.json --allowInsecureHTTP=1 --mountPath=/dashboard
+    command: /usr/local/bin/parse-dashboard --config /parse-dashboard/config.json --mountPath=/dashboard 
+    environment:
+      - PARSE_DASHBOARD_ALLOW_INSECURE_HTTP=1
+
   parse:
     image: parse-server
     build: ./parse

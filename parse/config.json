@@ -1,5 +1,6 @@
 {
-	"appId": "parse",
-	"masterKey": "parse",
-	"databaseURI": "postgres://jaycee:jaycee@db:5432/scalewaywebsite"
+	"appId": "tagalong",
+	"masterKey": "tagalong",
+	"databaseURI": "postgres://jaycee:jaycee@db:5432/scalewaywebsite",
+	"serverURL": "http://localhost:1337/parse"
 }
