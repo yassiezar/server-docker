@@ -40,7 +40,7 @@ services:
       - parse-server
     volumes:
       - ./parse-dashboard/config.json:/parse-dashboard/config.json 
-    command: /usr/local/bin/parse-dashboard --mountPath=/dashboard --allowInsecureHTTP=1 --serverURL=http://${SERVER_URL}:1337/parse --appId=tagalong --masterKey=tagalong
+    command: /usr/local/bin/parse-dashboard --mountPath=/dashboard --allowInsecureHTTP=1 --serverURL=https://jclock.co.uk/parse --appId=tagalong --masterKey=tagalong
     environment:
       - SERVER_URL=localhost
       - PARSE_DASHBOARD_USER_PASSWORD=jaycee
