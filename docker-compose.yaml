@@ -56,33 +56,6 @@ services:
     environment:
       - VERBOSE=1
 
-  #gitlab:
-    #image: gitlab
-    #build: ./gitlab
-    #restart: unless-stopped
-    #expose:
-      #- 443
-      #- 80
-      #- 22
-    #environment:
-      #GITLAB_OMNIBUS_CONFIG: |
-       #external_url 'http://localhost'
-       #letsencrypt['enabled'] = false
-       #nginx['listen_port'] = 80
-       #nginx['listen_https'] = false
-       #nginx['proxy_set_headers'] = {
-         #"X-Forwarded-Proto" => "$$schema",
-         #"X-Forwarded-Ssl" => "on",
-         #"Host" => "localhost",
-         #"X-Real-IP" => "$$remote_addr",
-         #"X-Forwarded-For" => "$$proxy_add_x_forwarded_for",
-         #"Upgrade" => "$$http_upgrade",
-         #"Connection" => "$$connection_upgrade"
-    #volumes:
-      #- /var/www-data/gitlab/config:/etc/gitlab
-      #- /var/www-data/gitlab/logs:/var/log/gitlab
-      #- /var/www-data/gitlab/data/:/var/opt/gitlab
-
   syncthing:
     image: syncthing
     build: ./syncthing
@@ -92,8 +65,32 @@ services:
       - 22000
       - 21027/udp
     volumes:
-      - /mnt/backup/SyncthingBackup/:/backup
-    command: /usr/bin/syncthing -gui-address https://localhost:8384/
+      - /mnt/backup/SyncthingBackup/:/backup/
+      - ./syncthing/config/:/syncthing/
+    command: /usr/bin/syncthing -gui-address http://0.0.0.0:8384/ -home /syncthing
+    environment:
+      - PUID=1001
+      - PGID=1001
+
+        #  gitea:
+        #    image: gitea
+        #    build: ./gitea
+        #    restart: unless-stopped
+        #    depends_on:
+        #      - db
+        #    expose:
+        #      - 22
+        #      - 3000
+        #    volumes:
+        #      - ./gitea/data/:/data
+        #    environment:
+        #      - USER_UID=1001
+        #      - USER_GID=1001
+        #      - DB_TYPE=postgres
+        #      - DB_HOST=db:5432
+        #      - DB_NAME=scalewaywebsite
+        #      - DB_USER=jaycee
+        #      - DB_PASSWD=jaycee
 
   proxy:
     image: proxy
