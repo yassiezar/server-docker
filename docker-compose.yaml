@@ -72,25 +72,27 @@ services:
       - PUID=1001
       - PGID=1001
 
-        #  gitea:
-        #    image: gitea
-        #    build: ./gitea
-        #    restart: unless-stopped
-        #    depends_on:
-        #      - db
-        #    expose:
-        #      - 22
-        #      - 3000
-        #    volumes:
-        #      - ./gitea/data/:/data
-        #    environment:
-        #      - USER_UID=1001
-        #      - USER_GID=1001
-        #      - DB_TYPE=postgres
-        #      - DB_HOST=db:5432
-        #      - DB_NAME=scalewaywebsite
-        #      - DB_USER=jaycee
-        #      - DB_PASSWD=jaycee
+  gitea:
+    image: gitea
+    build: ./gitea
+    restart: unless-stopped
+    depends_on:
+      - db
+    expose:
+      - 22
+      - 3000
+    volumes:
+      - ./gitea/data/:/data
+    environment:
+      - USER_UID=1001
+      - USER_GID=1001
+      - DB_TYPE=postgres
+      - DB_HOST=db:5432
+      - DB_NAME=scalewaywebsite
+      - DB_USER=jaycee
+      - DB_PASSWD=jaycee
+        #- ROOT_URL=http://0.0.0.0:3000/
+    command: /go/src/code.gitea.io/gitea/gitea web
 
   proxy:
     image: proxy
@@ -104,8 +106,6 @@ services:
       - ./proxy/uwsgi_params:/etc/nginx/uwsgi_params
       - /etc/letsencrypt/live/jclock.co.uk/privkey.pem:/etc/nginx/conf.d/key.pem
       - /etc/letsencrypt/live/jclock.co.uk/fullchain.pem:/etc/nginx/conf.d/cert.pem
-      #- ./proxy/key.pem:/etc/nginx/conf.d/key.pem
-      #- ./proxy/cert.pem:/etc/nginx/conf.d/cert.pem
       - /var/www-data/ScalewayWebsite/:/var/www-data/ScalewayWebsite/
     command: "bash -c '/usr/sbin/nginx -g \"daemon off;\"'"
 
