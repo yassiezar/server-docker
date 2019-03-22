@@ -60,21 +60,32 @@ services:
       - ./parse-server/config.json:/parse-server/config.json
     command: /usr/local/bin/parse-server /parse-server/config.json
 
-    #  gitlab:
+  #gitlab:
     #image: gitlab
     #build: ./gitlab
     #restart: unless-stopped
     #expose:
-    #  - 443
-    #  - 80
-    #  - 22
+      #- 443
+      #- 80
+      #- 22
     #environment:
-    #  GITLAB_OMNIBUS_CONFIG: |
-    #      external_url 'https://jclock.co.uk/gitlab'
+      #GITLAB_OMNIBUS_CONFIG: |
+       #external_url 'http://localhost'
+       #letsencrypt['enabled'] = false
+       #nginx['listen_port'] = 80
+       #nginx['listen_https'] = false
+       #nginx['proxy_set_headers'] = {
+         #"X-Forwarded-Proto" => "$$schema",
+         #"X-Forwarded-Ssl" => "on",
+         #"Host" => "localhost",
+         #"X-Real-IP" => "$$remote_addr",
+         #"X-Forwarded-For" => "$$proxy_add_x_forwarded_for",
+         #"Upgrade" => "$$http_upgrade",
+         #"Connection" => "$$connection_upgrade"
     #volumes:
-    #  - /var/www-data/gitlab/config:/etc/gitlab
-    #  - /var/www-data/gitlab/logs:/var/log/gitlab
-    #  - /var/www-data/gitlab/data/:/var/opt/gitlab
+      #- /var/www-data/gitlab/config:/etc/gitlab
+      #- /var/www-data/gitlab/logs:/var/log/gitlab
+      #- /var/www-data/gitlab/data/:/var/opt/gitlab
 
   syncthing:
     image: syncthing
