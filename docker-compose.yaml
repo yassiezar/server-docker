@@ -38,7 +38,7 @@ services:
       - ./parse-dashboard/config.json:/parse-dashboard/config.json 
     command: /usr/local/bin/parse-dashboard --mountPath=/dashboard --allowInsecureHTTP=1 --appId=tagalong --masterKey=tagalong
     environment:
-      - PARSE_DASHBOARD_SERVER_URL=http://localhost/parse/
+      - PARSE_DASHBOARD_SERVER_URL=https://localhost/parse/
       - PARSE_DASHBOARD_USER_PASSWORD=jaycee
       - PARSE_DASHBOARD_USER_ID=jaycee
 
@@ -85,17 +85,17 @@ services:
       #- /var/www-data/gitlab/logs:/var/log/gitlab
       #- /var/www-data/gitlab/data/:/var/opt/gitlab
 
-  #syncthing:
-    #image: syncthing
-    #build: ./syncthing
-    #restart: unless-stopped
-    #expose:
-      #- 8384
-      #- 22000
-      #- 21027/udp
-    #volumes:
-      #- /mnt/backup/SyncthingBackup/:/backup
-    #command: /usr/bin/syncthing -gui-address http://localhost:8384/
+  syncthing:
+    image: syncthing
+    build: ./syncthing
+    restart: unless-stopped
+    expose:
+      - 8384
+      - 22000
+      - 21027/udp
+    volumes:
+      - /mnt/backup/SyncthingBackup/:/backup
+    command: /usr/bin/syncthing -gui-address https://localhost:8384/
 
   proxy:
     image: proxy
@@ -109,6 +109,8 @@ services:
       - ./proxy/uwsgi_params:/etc/nginx/uwsgi_params
       - /etc/letsencrypt/live/jclock.co.uk/privkey.pem:/etc/nginx/conf.d/key.pem
       - /etc/letsencrypt/live/jclock.co.uk/fullchain.pem:/etc/nginx/conf.d/cert.pem
+      #- ./proxy/key.pem:/etc/nginx/conf.d/key.pem
+      #- ./proxy/cert.pem:/etc/nginx/conf.d/cert.pem
       - /var/www-data/ScalewayWebsite/:/var/www-data/ScalewayWebsite/
     command: "bash -c '/usr/sbin/nginx -g \"daemon off;\"'"
 
