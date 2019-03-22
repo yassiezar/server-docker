@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 
 services:
   db:
@@ -20,8 +20,6 @@ services:
     depends_on:
       - db
     command: /usr/local/bin/uwsgi --ini /jclock.co.uk/uwsgi_conf.ini --uid www-data --gid www-data
-    links:
-      - db
     volumes:
       - ./web/uwsgi_conf.ini:/jclock.co.uk/uwsgi_conf.ini
       - /var/www-data/ScalewayWebsite/:/var/www-data/ScalewayWebsite/
@@ -34,15 +32,13 @@ services:
     restart: unless-stopped
     expose:
       - 4040
-    links: 
-      - parse-server
     depends_on:
       - parse-server
     volumes:
       - ./parse-dashboard/config.json:/parse-dashboard/config.json 
-    command: /usr/local/bin/parse-dashboard --mountPath=/dashboard --allowInsecureHTTP=1 --serverURL=https://jclock.co.uk/parse --appId=tagalong --masterKey=tagalong
+    command: /usr/local/bin/parse-dashboard --mountPath=/dashboard --allowInsecureHTTP=1 --appId=tagalong --masterKey=tagalong
     environment:
-      - SERVER_URL=localhost
+      - PARSE_DASHBOARD_SERVER_URL=http://localhost/parse/
       - PARSE_DASHBOARD_USER_PASSWORD=jaycee
       - PARSE_DASHBOARD_USER_ID=jaycee
 
@@ -52,13 +48,15 @@ services:
     restart: unless-stopped
     expose:
       - 1337
-    links:
-      - db
     depends_on: 
       - db
     volumes:
       - ./parse-server/config.json:/parse-server/config.json
-    command: /usr/local/bin/parse-server /parse-server/config.json
+    command: /usr/local/bin/parse-server /parse-server/config.json 
+    environment:
+      - PARSE_PUBLIC_SERVER_URL=http://proxy/parse/
+      - PARSE_SERVER_URL=http://localhost:1337/parse/
+      - VERBOSE=1
 
   #gitlab:
     #image: gitlab
@@ -87,17 +85,17 @@ services:
       #- /var/www-data/gitlab/logs:/var/log/gitlab
       #- /var/www-data/gitlab/data/:/var/opt/gitlab
 
-  syncthing:
-    image: syncthing
-    build: ./syncthing
-    restart: unless-stopped
-    expose:
-      - 8384
-      - 22000
-      - 21027/udp
-    volumes:
-      - /mnt/backup/SyncthingBackup/:/backup
-    command: /usr/bin/syncthing -gui-address http://localhost:8384/
+  #syncthing:
+    #image: syncthing
+    #build: ./syncthing
+    #restart: unless-stopped
+    #expose:
+      #- 8384
+      #- 22000
+      #- 21027/udp
+    #volumes:
+      #- /mnt/backup/SyncthingBackup/:/backup
+    #command: /usr/bin/syncthing -gui-address http://localhost:8384/
 
   proxy:
     image: proxy
@@ -106,12 +104,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    links:
-      - parse-dashboard
-      - parse-server
-      - web
-        #    - gitlab
-      - syncthing
     volumes:
       - ./proxy/nginx.conf:/etc/nginx/conf.d/default.conf
       - ./proxy/uwsgi_params:/etc/nginx/uwsgi_params
