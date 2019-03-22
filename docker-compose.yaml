@@ -38,7 +38,7 @@ services:
       - ./parse-dashboard/config.json:/parse-dashboard/config.json 
     command: /usr/local/bin/parse-dashboard --mountPath=/dashboard --allowInsecureHTTP=1 --appId=tagalong --masterKey=tagalong
     environment:
-      - PARSE_DASHBOARD_SERVER_URL=https://localhost/parse/
+      - PARSE_DASHBOARD_SERVER_URL=https://jclock.co.uk/parse
       - PARSE_DASHBOARD_USER_PASSWORD=jaycee
       - PARSE_DASHBOARD_USER_ID=jaycee
 
@@ -54,8 +54,6 @@ services:
       - ./parse-server/config.json:/parse-server/config.json
     command: /usr/local/bin/parse-server /parse-server/config.json 
     environment:
-      - PARSE_PUBLIC_SERVER_URL=http://proxy/parse/
-      - PARSE_SERVER_URL=http://localhost:1337/parse/
       - VERBOSE=1
 
   #gitlab:
