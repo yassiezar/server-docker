@@ -10,6 +10,7 @@ services:
       - POSTGRES_PASSWORD=jaycee
     volumes:
       - ./postgres_data:/var/lib/postgresql/data/
+      - ./db/init_gitea.sql:/docker-entrypoint-initdb.d/gitea.sql
     expose:
       - 5432
 
@@ -79,10 +80,8 @@ services:
     user: git
     depends_on:
       - db
-    ports:
-      - "3000:3000"
     expose:
-      #- 3000
+      - 3000
       - 22
     volumes:
       - ./gitea/data/:/data
