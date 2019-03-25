@@ -1,3 +1,6 @@
 [submodule "ScalewayWebsite"]
 	path = ScalewayWebsite
 	url = git@github.com:jayceelock/ScalewayWebsite.git
+[submodule "gitea/gitea"]
+	path = gitea/gitea
+	url = https://github.com/go-gitea/gitea.git
