@@ -76,13 +76,18 @@ services:
     image: gitea
     build: ./gitea/gitea
     restart: unless-stopped
+    user: git
     depends_on:
       - db
+    ports:
+      - "3000:3000"
     expose:
-      - 3000
+      #- 3000
       - 22
     volumes:
       - ./gitea/data/:/data
+    environment:
+      - GITEA_WORK_DIR=/data/gitea
     command: /usr/local/bin/gitea web
 
   proxy:
