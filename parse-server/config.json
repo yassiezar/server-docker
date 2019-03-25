@@ -1,5 +1,5 @@
 {
 	"appId": "tagalong",
 	"masterKey": "tagalong",
-	"databaseURI": "postgres://jaycee:jaycee@db:5432/scalewaywebsite"
+	"databaseURI": "postgres://parse:parse@db:5432/parse"
 }
