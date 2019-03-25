@@ -74,25 +74,16 @@ services:
 
   gitea:
     image: gitea
-    build: ./gitea
+    build: ./gitea/gitea
     restart: unless-stopped
     depends_on:
       - db
     expose:
-      - 22
       - 3000
+      - 22
     volumes:
       - ./gitea/data/:/data
-    environment:
-      - USER_UID=1001
-      - USER_GID=1001
-      - DB_TYPE=postgres
-      - DB_HOST=db:5432
-      - DB_NAME=scalewaywebsite
-      - DB_USER=jaycee
-      - DB_PASSWD=jaycee
-        #- ROOT_URL=http://localhost:3000/
-    command: /gitea/gitea web
+    command: /usr/local/bin/gitea web
 
   proxy:
     image: proxy
