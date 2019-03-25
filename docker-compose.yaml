@@ -4,9 +4,13 @@ services:
   db:
     image: postgres
     restart: unless-stopped
+    environment:
+      - POSTGRES_USER=jaycee
+      - POSTGRES_DB=jaycee
+      - POSTGRES_PASSWORD=jaycee
     volumes:
       - ./postgres_data:/var/lib/postgresql/data/
-      - ./db/init_gitea.sql:/docker-entrypoint-initdb.d/gitea.sql
+      - ./db:/docker-entrypoint-initdb.d
     expose:
       - 5432
 
@@ -35,7 +39,7 @@ services:
       - ./parse-dashboard/config.json:/parse-dashboard/config.json 
     command: /usr/local/bin/parse-dashboard --mountPath=/dashboard --allowInsecureHTTP=1 --appId=tagalong --masterKey=tagalong
     environment:
-      - PARSE_DASHBOARD_SERVER_URL=https://jclock.co.uk/parse
+      - PARSE_DASHBOARD_SERVER_URL=https://jclock.co.uk/parse/
       - PARSE_DASHBOARD_USER_PASSWORD=jaycee
       - PARSE_DASHBOARD_USER_ID=jaycee
 
@@ -71,7 +75,7 @@ services:
 
   gitea:
     image: gitea
-    build: ./gitea/gitea
+    build: ./gitea
     restart: unless-stopped
     user: git
     depends_on:
@@ -82,6 +86,8 @@ services:
     volumes:
       - ./gitea/data/:/data
     environment:
+      - USER_UID=1001
+      - USER_GID=1001
       - GITEA_WORK_DIR=/data/gitea
     command: /usr/local/bin/gitea web
 
