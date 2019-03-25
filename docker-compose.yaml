@@ -4,10 +4,6 @@ services:
   db:
     image: postgres
     restart: unless-stopped
-    environment:
-      - POSTGRES_DB=scalewaywebsite
-      - POSTGRES_USER=jaycee
-      - POSTGRES_PASSWORD=jaycee
     volumes:
       - ./postgres_data:/var/lib/postgresql/data/
       - ./db/init_gitea.sql:/docker-entrypoint-initdb.d/gitea.sql
