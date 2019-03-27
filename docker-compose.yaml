@@ -106,7 +106,7 @@ services:
       - EMAIL=jaycee.lock@gmail.com
     volumes:
       - ./proxy/config:/config
-      - ./proxy/new_nginx.conf:/config/nginx/site-confs/default
+      - ./proxy/nginx.conf:/config/nginx/site-confs/default
       - ./proxy/uwsgi_params:/etc/nginx/uwsgi_params
       - /var/www-data/ScalewayWebsite/:/var/www-data/ScalewayWebsite/
 
