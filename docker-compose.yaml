@@ -1,6 +1,26 @@
 version: '3'
 
 services:
+  dbbackups:
+    image: dbbackup
+    build: ./dbbackup
+    restart: always
+    volumes:
+      - ./pgbackup/backups/:/backups
+    depends_on:
+      - db
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=jaycee gitea parse
+      - POSTGRES_USER=jaycee
+      - POSTGRES_PASSWORD=jaycee
+      - POSTGRES_EXTRA_OPTS=-Z9 --schema=public --blobs
+      - SCHEDULE=@daily
+      - BACKUP_KEEP_DAYS=7
+      - BACKUP_KEEP_WEEKS=4
+      - BACKUP_KEEP_MONTHS=6
+      - HEALTHCHECK_PORT=81
+
   db:
     image: postgres
     restart: unless-stopped
