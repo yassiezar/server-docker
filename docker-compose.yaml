@@ -1,12 +1,12 @@
 version: '3'
 
 services:
-  dbbackups:
+  dbbackup:
     image: dbbackup
     build: ./dbbackup
     restart: always
     volumes:
-      - ./pgbackup/backups/:/backups
+      - ./dbbackup/pgbackup/backups/:/backups
     depends_on:
       - db
     environment:
