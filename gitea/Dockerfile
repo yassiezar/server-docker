@@ -1,5 +1,4 @@
 FROM alpine:3.9
-LABEL maintainer="maintainers@gitea.io"
 
 RUN apk --no-cache add \
     bash \
@@ -13,6 +12,7 @@ RUN apk --no-cache add \
     s6 \
     sqlite \
     su-exec \
+#    sudo \
     tzdata
 
 WORKDIR /app/gitea/
@@ -30,12 +30,15 @@ RUN addgroup \
     -G git \
     git && \
   echo "git:$(dd if=/dev/urandom bs=24 count=1 status=none | base64)" | chpasswd
+#  echo "git:jaycee" | chpasswd
+#RUN adduser git sudo
+#RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 ENV USER git
 ENV GITEA_CUSTOM /data/gitea
 
-ENTRYPOINT ["/usr/bin/entrypoint"]
-CMD ["/bin/s6-svscan", "/etc/s6"]
-
 COPY gitea/docker /
 RUN ln -s /app/gitea/gitea /usr/local/bin/gitea
+
+ENTRYPOINT ["/usr/bin/entrypoint"]
+CMD ["/bin/s6-svscan", "/etc/s6"]

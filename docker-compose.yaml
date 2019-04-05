@@ -96,20 +96,21 @@ services:
     image: gitea
     build: ./gitea
     restart: unless-stopped
-    user: git
+    #user: git
     depends_on:
       - db
     expose:
       - 3000
     ports:
-      - "127.0.0.1:22222:22"
+      - "22222:22"
     volumes:
       - ./gitea/data/:/data
     environment:
       - USER_UID=1001
       - USER_GID=1001
       - GITEA_WORK_DIR=/data/gitea
-    command: /usr/local/bin/gitea web
+        #command: /usr/local/bin/gitea web
+    command: /bin/s6-svscan /etc/s6
 
   proxy:
     image: linuxserver/letsencrypt
