@@ -1,6 +1,25 @@
 version: '3'
 
 services:
+  dbbackup:
+    image: dbbackup
+    build: ./dbbackup
+    restart: always
+    volumes:
+      - ./dbbackup/pgbackup/backups/:/backups
+    depends_on:
+      - db
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=jaycee gitea parse
+      - POSTGRES_USER=jaycee
+      - POSTGRES_PASSWORD=jaycee
+      - POSTGRES_EXTRA_OPTS=-Z9 --schema=public --blobs
+      - SCHEDULE=@daily
+      - BACKUP_KEEP_DAYS=7
+      - BACKUP_KEEP_WEEKS=4
+      - BACKUP_KEEP_MONTHS=6
+
   db:
     image: postgres
     restart: unless-stopped
@@ -106,7 +125,7 @@ services:
       - EMAIL=jaycee.lock@gmail.com
     volumes:
       - ./proxy/config:/config
-      - ./proxy/new_nginx.conf:/config/nginx/site-confs/default
+      - ./proxy/nginx.conf:/config/nginx/site-confs/default
       - ./proxy/uwsgi_params:/etc/nginx/uwsgi_params
       - /var/www-data/ScalewayWebsite/:/var/www-data/ScalewayWebsite/
 
