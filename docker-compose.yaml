@@ -102,7 +102,7 @@ services:
     expose:
       - 3000
     ports:
-      - "22222:22"
+      - "127.0.0.1:22222:22"
     volumes:
       - ./gitea/data/:/data
     environment:

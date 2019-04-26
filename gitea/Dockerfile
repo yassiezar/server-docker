@@ -29,8 +29,8 @@ RUN addgroup \
     -u 1001 \
     -G git \
     git && \
-  echo "git:$(dd if=/dev/urandom bs=24 count=1 status=none | base64)" | chpasswd
-#  echo "git:jaycee" | chpasswd
+#  echo "git:$(dd if=/dev/urandom bs=24 count=1 status=none | base64)" | chpasswd
+  echo "git:jaycee" | chpasswd
 #RUN adduser git sudo
 #RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
