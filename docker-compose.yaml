@@ -1,6 +1,25 @@
 version: '3'
 
 services:
+  dbbackup:
+    image: dbbackup
+    build: ./dbbackup
+    restart: always
+    volumes:
+      - ./dbbackup/pgbackup/backups/:/backups
+    depends_on:
+      - db
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=jaycee gitea parse
+      - POSTGRES_USER=jaycee
+      - POSTGRES_PASSWORD=jaycee
+      - POSTGRES_EXTRA_OPTS=-Z9 --schema=public --blobs
+      - SCHEDULE=@daily
+      - BACKUP_KEEP_DAYS=7
+      - BACKUP_KEEP_WEEKS=4
+      - BACKUP_KEEP_MONTHS=6
+
   db:
     image: postgres
     restart: unless-stopped
@@ -39,7 +58,7 @@ services:
       - ./parse-dashboard/config.json:/parse-dashboard/config.json 
     command: /usr/local/bin/parse-dashboard --mountPath=/dashboard --allowInsecureHTTP=1 --appId=tagalong --masterKey=tagalong
     environment:
-      - PARSE_DASHBOARD_SERVER_URL=https://jclock.co.uk/parse/
+      - PARSE_DASHBOARD_SERVER_URL=https://tagalong.jclock.co.uk/parse/
       - PARSE_DASHBOARD_USER_PASSWORD=jaycee
       - PARSE_DASHBOARD_USER_ID=jaycee
 
@@ -92,19 +111,23 @@ services:
     command: /usr/local/bin/gitea web
 
   proxy:
-    image: proxy
-    build: ./proxy
+    image: linuxserver/letsencrypt
     restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
+    environment:
+      - PUID=1001
+      - PGID=1001
+      - URL=jclock.co.uk
+      - SUBDOMAINS=www,git,tagalong,syncthing
+      - VALIDATION=http
+      - EMAIL=jaycee.lock@gmail.com
     volumes:
-      - ./proxy/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./proxy/config:/config
+      - ./proxy/nginx.conf:/config/nginx/site-confs/default
       - ./proxy/uwsgi_params:/etc/nginx/uwsgi_params
-      - /etc/letsencrypt/live/jclock.co.uk/privkey.pem:/etc/nginx/conf.d/key.pem
-      - /etc/letsencrypt/live/jclock.co.uk/fullchain.pem:/etc/nginx/conf.d/cert.pem
       - /var/www-data/ScalewayWebsite/:/var/www-data/ScalewayWebsite/
-    command: "bash -c '/usr/sbin/nginx -g \"daemon off;\"'"
 
 volumes:
   postgres_data:

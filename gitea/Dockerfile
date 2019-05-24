@@ -16,7 +16,7 @@ RUN apk --no-cache add \
     tzdata
 
 WORKDIR /app/gitea/
-RUN wget -O /app/gitea/gitea https://github.com/go-gitea/gitea/releases/download/v1.8.0-rc1/gitea-1.8.0-rc1-linux-arm-6
+RUN wget -O /app/gitea/gitea https://github.com/go-gitea/gitea/releases/download/v1.8.0/gitea-1.8.0-linux-arm-6
 RUN chmod +x /app/gitea/gitea
 
 RUN addgroup \
