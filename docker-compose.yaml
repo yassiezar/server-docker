@@ -20,6 +20,24 @@ services:
       - BACKUP_KEEP_WEEKS=4
       - BACKUP_KEEP_MONTHS=6
 
+  drone:
+    image: drone/drone
+    #build: ./drone
+    restart: unless-stopped
+    environment: 
+      - DRONE_GITEA_SERVER=https://git.jclock.co.uk/
+      - DRONE_GIT_ALWAYS_AUTH=false
+      - DRONE_RUNNER_CAPACITY=1 
+      - DRONE_SERVER_HOST=drone.jclock.co.uk
+      - DRONE_SERVER_PROTO=https
+      - DRONE_TLS_AUTOCERT=false
+        #- DRONE_SERVER_PORT=8080
+    volumes:
+      - ./drone/data/:/var/lib/drone/
+    expose:
+      - 80
+      - 443
+
   db:
     image: postgres
     restart: unless-stopped
