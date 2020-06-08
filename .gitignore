@@ -1,3 +1,4 @@
+proxy/*.pem
 dbbackup/pgbackup/
 gitea/data/
 proxy/config/

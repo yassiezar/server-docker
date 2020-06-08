@@ -1,2 +1,3 @@
+# Blank last line crucial
 0 0 * * * /backup.sh>> /var/log/backup.log
 
