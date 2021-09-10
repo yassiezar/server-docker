@@ -39,7 +39,7 @@ services:
       - 443
 
   db:
-    image: postgres
+    image: postgres:11-buster
     restart: unless-stopped
     environment:
       - POSTGRES_USER=jaycee
@@ -54,13 +54,14 @@ services:
   web:
     build: ./web
     image: scalewaywebsite
-    restart: unless-stopped
+    restart: always 
     depends_on:
       - db
-    command: /usr/local/bin/uwsgi --ini /jclock.co.uk/uwsgi_conf.ini --uid www-data --gid www-data
+    command: /usr/local/bin/uwsgi --ini /jclock.co.uk/uwsgi_conf.ini --uid www-data --gid www-data 
     volumes:
       - ./web/uwsgi_conf.ini:/jclock.co.uk/uwsgi_conf.ini
       - /var/www-data/ScalewayWebsite/:/var/www-data/ScalewayWebsite/
+      - ./web/ScalewayWebsite/:/jclock.co.uk/ScalewayWebsite/
     expose:
       - 8080
 
@@ -95,20 +96,38 @@ services:
       - VERBOSE=1
 
   syncthing:
+          #    image: ghcr.io/linuxserver/syncthing
+          #    container_name: syncthing
+          #    hostname: syncthing
+          #    restart: unless-stopped
+          #    expose:
+          #      - 8384
+          #    ports:
+          #      - 22000:22000/tcp
+          #      - 22000:22000/udp
+          #      - 21027:21027/udp
+          #        #- 8384:8384
+          #    volumes:
+          #      - /mnt/backup/SyncthingBackup/:/backup/
+          #      - ./syncthing/config/:/config/
+          #    environment:
+          #      - PUID=1002       # corresponds to backupserver user
+          #      - PGID=1002
     image: syncthing
     build: ./syncthing
-    restart: unless-stopped
+    container_name: syncthing
+    restart: always
     expose:
       - 8384
       - 22000
-      - 21027/udp
+      - 21027
     volumes:
       - /mnt/backup/SyncthingBackup/:/backup/
       - ./syncthing/config/:/syncthing/
     command: /usr/bin/syncthing -gui-address http://0.0.0.0:8384/ -home /syncthing
     environment:
-      - PUID=1001
-      - PGID=1001
+      - PUID=1002       # corresponds to backupserver user
+      - PGID=1002
 
   gitea:
     image: gitea
@@ -129,8 +148,8 @@ services:
     command: /usr/local/bin/gitea web
 
   proxy:
-    image: linuxserver/letsencrypt
-    restart: unless-stopped
+    image: linuxserver/swag             # LetsEncrypt proxy server
+    restart: always
     ports:
       - "80:80"
       - "443:443"
