@@ -1,62 +1,62 @@
 version: '3'
 
 services:
-  dbbackup:
-    image: dbbackup
-    build: ./dbbackup
-    restart: always
-    volumes:
-      - ./dbbackup/pgbackup/backups/:/backups
-    depends_on:
-      - db
-    environment:
-      - POSTGRES_HOST=db
-      - POSTGRES_DB=jaycee gitea parse
-      - POSTGRES_USER=jaycee
-      - POSTGRES_PASSWORD=jaycee
-      - POSTGRES_EXTRA_OPTS=-Z9 --schema=public --blobs
-      - SCHEDULE=@daily
-      - BACKUP_KEEP_DAYS=7
-      - BACKUP_KEEP_WEEKS=4
-      - BACKUP_KEEP_MONTHS=6
-
-  drone:
-    image: drone/drone
-    #build: ./drone
-    restart: unless-stopped
-    environment: 
-      - DRONE_GITEA_SERVER=https://git.jclock.co.uk/
-      - DRONE_GIT_ALWAYS_AUTH=false
-      - DRONE_RUNNER_CAPACITY=1 
-      - DRONE_SERVER_HOST=drone.jclock.co.uk
-      - DRONE_SERVER_PROTO=https
-      - DRONE_TLS_AUTOCERT=false
-        #- DRONE_SERVER_PORT=8080
-    volumes:
-      - ./drone/data/:/var/lib/drone/
-    expose:
-      - 80
-      - 443
-
-  db:
-    image: postgres:11-buster
-    restart: unless-stopped
-    environment:
-      - POSTGRES_USER=jaycee
-      - POSTGRES_DB=jaycee
-      - POSTGRES_PASSWORD=jaycee
-    volumes:
-      - ./postgres_data:/var/lib/postgresql/data/
-      - ./db:/docker-entrypoint-initdb.d
-    expose:
-      - 5432
-
+        #  dbbackup:
+        #    image: dbbackup
+        #    build: ./dbbackup
+        #    restart: always
+        #    volumes:
+        #      - ./dbbackup/pgbackup/backups/:/backups
+        #    depends_on:
+        #      - db
+        #    environment:
+        #      - POSTGRES_HOST=db
+        #      - POSTGRES_DB=jaycee gitea parse
+        #      - POSTGRES_USER=jaycee
+        #      - POSTGRES_PASSWORD=jaycee
+        #      - POSTGRES_EXTRA_OPTS=-Z9 --schema=public --blobs
+        #      - SCHEDULE=@daily
+        #      - BACKUP_KEEP_DAYS=7
+        #      - BACKUP_KEEP_WEEKS=4
+        #      - BACKUP_KEEP_MONTHS=6
+        #
+        #  drone:
+        #    image: drone/drone
+        #    #build: ./drone
+        #    restart: unless-stopped
+        #    environment: 
+        #      - DRONE_GITEA_SERVER=https://git.jclock.co.uk/
+        #      - DRONE_GIT_ALWAYS_AUTH=false
+        #      - DRONE_RUNNER_CAPACITY=1 
+        #      - DRONE_SERVER_HOST=drone.jclock.co.uk
+        #      - DRONE_SERVER_PROTO=https
+        #      - DRONE_TLS_AUTOCERT=false
+        #        #- DRONE_SERVER_PORT=8080
+        #    volumes:
+        #      - ./drone/data/:/var/lib/drone/
+        #    expose:
+        #      - 80
+        #      - 443
+        #
+        #  db:
+        #    image: postgres:11-buster
+        #    restart: unless-stopped
+        #    environment:
+        #      - POSTGRES_USER=jaycee
+        #      - POSTGRES_DB=jaycee
+        #      - POSTGRES_PASSWORD=jaycee
+        #    volumes:
+        #      - ./postgres_data:/var/lib/postgresql/data/
+        #      - ./db:/docker-entrypoint-initdb.d
+        #    expose:
+        #      - 5432
+        #
   web:
     build: ./web
     image: scalewaywebsite
     restart: always 
-    depends_on:
-      - db
+    #    depends_on:
+    #      - db
     command: /usr/local/bin/uwsgi --ini /jclock.co.uk/uwsgi_conf.ini --uid www-data --gid www-data 
     volumes:
       - ./web/uwsgi_conf.ini:/jclock.co.uk/uwsgi_conf.ini
@@ -64,55 +64,38 @@ services:
       - ./web/ScalewayWebsite/:/jclock.co.uk/ScalewayWebsite/
     expose:
       - 8080
-
-  parse-dashboard:
-    image: parse-dashboard
-    build: ./parse-dashboard
-    restart: unless-stopped
-    expose:
-      - 4040
-    depends_on:
-      - parse-server
-    volumes:
-      - ./parse-dashboard/config.json:/parse-dashboard/config.json 
-    command: /usr/local/bin/parse-dashboard --mountPath=/dashboard --allowInsecureHTTP=1 --appId=tagalong --masterKey=tagalong
-    environment:
-      - PARSE_DASHBOARD_SERVER_URL=https://tagalong.jclock.co.uk/parse/
-      - PARSE_DASHBOARD_USER_PASSWORD=jaycee
-      - PARSE_DASHBOARD_USER_ID=jaycee
-
-  parse-server:
-    image: parse-server
-    build: ./parse-server
-    restart: unless-stopped
-    expose:
-      - 1337
-    depends_on: 
-      - db
-    volumes:
-      - ./parse-server/config.json:/parse-server/config.json
-    command: /usr/local/bin/parse-server /parse-server/config.json 
-    environment:
-      - VERBOSE=1
+        #
+        #  parse-dashboard:
+        #    image: parse-dashboard
+        #    build: ./parse-dashboard
+        #    restart: unless-stopped
+        #    expose:
+        #      - 4040
+        #    depends_on:
+        #      - parse-server
+        #    volumes:
+        #      - ./parse-dashboard/config.json:/parse-dashboard/config.json 
+        #    command: /usr/local/bin/parse-dashboard --mountPath=/dashboard --allowInsecureHTTP=1 --appId=tagalong --masterKey=tagalong
+        #    environment:
+        #      - PARSE_DASHBOARD_SERVER_URL=https://tagalong.jclock.co.uk/parse/
+        #      - PARSE_DASHBOARD_USER_PASSWORD=jaycee
+        #      - PARSE_DASHBOARD_USER_ID=jaycee
+        #
+        #  parse-server:
+        #    image: parse-server
+        #    build: ./parse-server
+        #    restart: unless-stopped
+        #    expose:
+        #      - 1337
+        #    depends_on: 
+        #      - db
+        #    volumes:
+        #      - ./parse-server/config.json:/parse-server/config.json
+        #    command: /usr/local/bin/parse-server /parse-server/config.json 
+        #    environment:
+        #      - VERBOSE=1
 
   syncthing:
-          #    image: ghcr.io/linuxserver/syncthing
-          #    container_name: syncthing
-          #    hostname: syncthing
-          #    restart: unless-stopped
-          #    expose:
-          #      - 8384
-          #    ports:
-          #      - 22000:22000/tcp
-          #      - 22000:22000/udp
-          #      - 21027:21027/udp
-          #        #- 8384:8384
-          #    volumes:
-          #      - /mnt/backup/SyncthingBackup/:/backup/
-          #      - ./syncthing/config/:/config/
-          #    environment:
-          #      - PUID=1002       # corresponds to backupserver user
-          #      - PGID=1002
     image: syncthing
     build: ./syncthing
     container_name: syncthing
@@ -129,23 +112,23 @@ services:
       - PUID=1002       # corresponds to backupserver user
       - PGID=1002
 
-  gitea:
-    image: gitea
-    build: ./gitea
-    restart: unless-stopped
-    user: git
-    depends_on:
-      - db
-    expose:
-      - 3000
-      - 22
-    volumes:
-      - ./gitea/data/:/data
-    environment:
-      - USER_UID=1001
-      - USER_GID=1001
-      - GITEA_WORK_DIR=/data/gitea
-    command: /usr/local/bin/gitea web
+        #  gitea:
+        #    image: gitea
+        #    build: ./gitea
+        #    restart: unless-stopped
+        #    user: git
+        #    depends_on:
+        #      - db
+        #    expose:
+        #      - 3000
+        #      - 22
+        #    volumes:
+        #      - ./gitea/data/:/data
+        #    environment:
+        #      - USER_UID=1001
+        #      - USER_GID=1001
+        #      - GITEA_WORK_DIR=/data/gitea
+        #    command: /usr/local/bin/gitea web
 
   proxy:
     image: linuxserver/swag             # LetsEncrypt proxy server
